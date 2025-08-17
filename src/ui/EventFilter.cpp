@@ -6,6 +6,7 @@
 #include "settings/SettingsComponent.h"
 #include "input/InputKeyboard.h"
 #include <QQuickWindow>
+#include "player/PlayerComponent.h"
 #include <QQuickItem>
 
 #include <QKeyEvent>
@@ -85,6 +86,42 @@ bool EventFilter::eventFilter(QObject* watched, QEvent* event)
         else
           keystatus = InputBase::KeyUp;
 
+        // Hardcoded custom shortcuts for desktop mode - intercept specific key combinations
+        if (keystatus == InputBase::KeyDown)
+        {
+          // Handle our custom MPV-like shortcuts directly
+          if ((key->modifiers() & Qt::ShiftModifier) && key->key() == Qt::Key_Right)
+          {
+            PlayerComponent::Get().userCommand("seek 3 exact");
+            return true;
+          }
+          else if ((key->modifiers() & Qt::ShiftModifier) && key->key() == Qt::Key_Left)
+          {
+            PlayerComponent::Get().userCommand("seek -3 exact");
+            return true;
+          }
+          else if (key->text() == "(" || (key->key() == Qt::Key_9 && (key->modifiers() & Qt::ShiftModifier)))
+          {
+            PlayerComponent::Get().userCommand("add speed -0.1");
+            return true;
+          }
+          else if (key->text() == ")" || (key->key() == Qt::Key_0 && (key->modifiers() & Qt::ShiftModifier)))
+          {
+            PlayerComponent::Get().userCommand("add speed 0.1");
+            return true;
+          }
+          else if ((key->key() == Qt::Key_A || key->text().toLower() == "a") && !(key->modifiers() & Qt::ControlModifier) && !(key->modifiers() & Qt::AltModifier))
+          {
+            InputKeyboard::Get().keyPress("A", InputBase::KeyPressed);
+            return true;
+          }
+          else if ((key->key() == Qt::Key_S || key->text().toLower() == "s") && !(key->modifiers() & Qt::ControlModifier) && !(key->modifiers() & Qt::AltModifier))
+          {
+            InputKeyboard::Get().keyPress("S", InputBase::KeyPressed);
+            return true;
+          }
+        }
+
         QString seq = keyEventToKeyString(key);
 #ifdef Q_OS_WIN32
         if (win32BlackListedKeys.contains(seq))
@@ -106,13 +143,42 @@ bool EventFilter::eventFilter(QObject* watched, QEvent* event)
       QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(event);
 
       if (mouseEvent) {
-        QQuickItem* webView = window->findChild<QQuickItem*>("web");
+        //QQuickItem* webView = window->findChild<QQuickItem*>("web");
 
         if (mouseEvent->button() == Qt::BackButton)
-          QMetaObject::invokeMethod(webView, "goBack");
+        {
+          //QMetaObject::invokeMethod(webView, "goBack");
+          // Custom: Navigate to previous chapter
+          PlayerComponent::Get().userCommand("add chapter -1");
+        }
 
         if (mouseEvent->button() == Qt::ForwardButton)
-          QMetaObject::invokeMethod(webView, "goForward");
+        {
+          //QMetaObject::invokeMethod(webView, "goForward");
+          // Custom: Navigate to next chapter
+          PlayerComponent::Get().userCommand("add chapter 1");
+        }
+      }
+    }
+    else if (event->type() == QEvent::Wheel)
+    {
+      // Gestion de la molette en mode desktop
+      QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(event);
+      if (wheelEvent)
+      {
+        QPoint angleDelta = wheelEvent->angleDelta();
+        
+        // Gestion de la molette horizontale pour le seek
+        if (angleDelta.x() > 0)
+        {
+          PlayerComponent::Get().userCommand("seek -3 exact");
+          return true;
+        }
+        else if (angleDelta.x() < 0)
+        {
+          PlayerComponent::Get().userCommand("seek 3 exact");
+          return true;
+        }
       }
     }
 
@@ -170,6 +236,42 @@ bool EventFilter::eventFilter(QObject* watched, QEvent* event)
 
     QString keyName = keyEventToKeyString(kevent);
 
+    // Hardcoded custom shortcuts - intercept specific key combinations
+    if (keystatus == InputBase::KeyDown)
+    {
+      // Handle our custom MPV-like shortcuts directly
+      if ((kevent->modifiers() & Qt::ShiftModifier) && kevent->key() == Qt::Key_Right)
+      {
+        PlayerComponent::Get().userCommand("seek 3 exact");
+        return true;
+      }
+      else if ((kevent->modifiers() & Qt::ShiftModifier) && kevent->key() == Qt::Key_Left)
+      {
+        PlayerComponent::Get().userCommand("seek -3 exact");
+        return true;
+      }
+      else if (kevent->text() == "(" || (kevent->key() == Qt::Key_9 && (kevent->modifiers() & Qt::ShiftModifier)))
+      {
+        PlayerComponent::Get().userCommand("add speed -0.1");
+        return true;
+      }
+      else if (kevent->text() == ")" || (kevent->key() == Qt::Key_0 && (kevent->modifiers() & Qt::ShiftModifier)))
+      {
+        PlayerComponent::Get().userCommand("add speed 0.1");
+        return true;
+      }
+      else if ((kevent->key() == Qt::Key_A || kevent->text().toLower() == "a") && !(kevent->modifiers() & Qt::ControlModifier) && !(kevent->modifiers() & Qt::AltModifier))
+      {
+        InputKeyboard::Get().keyPress("cycle_audio_internal", InputBase::KeyPressed);
+        return true;
+      }
+      else if ((kevent->key() == Qt::Key_S || kevent->text().toLower() == "s") && !(kevent->modifiers() & Qt::ControlModifier) && !(kevent->modifiers() & Qt::AltModifier))
+      {
+        InputKeyboard::Get().keyPress("cycle_subtitles_internal", InputBase::KeyPressed);
+        return true;
+      }
+    }
+
 #ifdef Q_OS_WIN32
     // On Windows, ignore media keys as they are handled elsewhere.
     if (win32BlackListedKeys.contains(keyName))
@@ -199,6 +301,22 @@ bool EventFilter::eventFilter(QObject* watched, QEvent* event)
   }
   else if (event->type() == QEvent::Wheel)
   {
+    QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(event);
+    if (wheelEvent)
+    {
+      // Gestion de la molette horizontale pour le seek
+      QPoint angleDelta = wheelEvent->angleDelta();
+      if (angleDelta.x() > 0)
+      {
+        PlayerComponent::Get().userCommand("seek -3 exact");
+        return true;
+      }
+      else if (angleDelta.x() < 0)
+      {
+        PlayerComponent::Get().userCommand("seek 3 exact");
+        return true;
+      }
+    }
     return true;
   }
   else if (event->type() == QEvent::MouseButtonPress)

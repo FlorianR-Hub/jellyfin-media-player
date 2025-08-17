@@ -19,7 +19,8 @@ const features = [
 const getPlugins = () => {
     const basePlugins = [
         'inputPlugin',
-        'updatePlugin'
+        'updatePlugin',
+        'jmpOSDPlugin'
     ];
 
     const mpvEnabled = jmpInfo.settings?.main?.enableMPV !== false;

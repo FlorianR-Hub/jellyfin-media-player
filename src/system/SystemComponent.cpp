@@ -34,7 +34,6 @@
 #include "utils/Utils.h"
 #include "utils/Log.h"
 
-
 #define KONVERGO_PRODUCTID_DEFAULT  3
 #define KONVERGO_PRODUCTID_OPENELEC 4
 

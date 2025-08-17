@@ -36,7 +36,7 @@
     "Ctrl\\+A": "cycle_audio_back",
     "L": "cycle_subtitles",
     "Ctrl\\+L": "cycle_subtitles_back",
-    "S": "toggle_subtitles",
+    "S": "cycle_subtitles",
     "Alt\\+A": "increase_audio_delay",
     "Alt\\+Shift\\+A": "decrease_audio_delay",
     "Alt\\+S": "increase_subtitles_delay",
