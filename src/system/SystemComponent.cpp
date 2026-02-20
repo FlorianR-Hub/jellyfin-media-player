@@ -34,7 +34,6 @@
 #include "utils/Utils.h"
 #include "utils/Log.h"
 
-
 #define KONVERGO_PRODUCTID_DEFAULT  3
 #define KONVERGO_PRODUCTID_OPENELEC 4
 
@@ -598,6 +597,7 @@ QString SystemComponent::getNativeShellScript()
     ":/web-client/extension/mpvAudioPlayer.js",
     ":/web-client/extension/inputPlugin.js",
     ":/web-client/extension/updatePlugin.js",
+    ":/web-client/extension/jmpOSDPlugin.js",
     ":/web-client/extension/connectivityHelper.js",
     ":/web-client/extension/nativeshell.js"
   };

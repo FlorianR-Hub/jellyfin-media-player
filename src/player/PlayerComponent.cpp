@@ -103,7 +103,9 @@ void PlayerComponent::initializeMpv()
   m_mpv->setProperty("force-window", true);
 
   // Disable native OSD if mpv_command_string() is used.
-  m_mpv->setProperty("osd-level", "0");
+  m_mpv->setProperty("osd-level", "1");
+  m_mpv->setProperty("osd-bar", "no");
+  m_mpv->setProperty("osd-on-seek", "msg");
 
   // This forces the player not to rebase playback time to 0 with mkv. We
   // require this, because mkv transcoding lets files start at times other
