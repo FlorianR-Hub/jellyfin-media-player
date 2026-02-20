@@ -470,6 +470,11 @@
                 dlg.parentNode.removeChild(dlg);
             }
 
+            // Exit fullscreen when closing the player
+            if (window.jmpInfo.settings.main.fullscreen) {
+                window.jmpInfo.settings.main.fullscreen = false;
+            }
+
             // Only supporting QtWebEngine here
             if (document.webkitIsFullScreen && document.webkitExitFullscreen) {
                 document.webkitExitFullscreen();

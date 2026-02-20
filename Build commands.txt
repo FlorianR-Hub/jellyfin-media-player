@@ -1,0 +1,13 @@
+Build commands :
+
+git submodule update --init --recursive
+mkdir build
+cd build
+cmake -GNinja -DQTROOT=/opt/homebrew/Cellar/qt/6.10.2 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=output -DUSE_STATIC_MPVQT=ON -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk ..
+ninja install
+
+# L'application compilée se trouve dans : build/output/Jellyfin Desktop.app
+
+Force App signing :
+
+codesign --force --deep --sign - "output/Jellyfin Desktop.app"

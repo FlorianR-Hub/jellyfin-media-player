@@ -299,12 +299,30 @@ window.initCompleted = new Promise(async (resolve) => {
         }
     );
 
-    // Sync cursor visibility with jellyfin-web's mouse idle state
+    // Custom cursor visibility management with 1 second timeout
+    let cursorTimeout;
+    const CURSOR_HIDE_DELAY = 1000; // 1 second
+    
+    const showCursor = () => {
+        window.api.window.setCursorVisibility(true);
+        clearTimeout(cursorTimeout);
+        cursorTimeout = setTimeout(() => {
+            window.api.window.setCursorVisibility(false);
+        }, CURSOR_HIDE_DELAY);
+    };
+    
+    // Show cursor on mouse movement
+    document.addEventListener('mousemove', showCursor);
+    document.addEventListener('mousedown', showCursor);
+    
+    // Also sync with jellyfin-web's mouse idle state as fallback
     const observer = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
             if (mutation.attributeName === 'class') {
                 const isIdle = document.body.classList.contains('mouseIdle');
-                window.api.window.setCursorVisibility(!isIdle);
+                if (!isIdle) {
+                    showCursor();
+                }
             }
         }
     });

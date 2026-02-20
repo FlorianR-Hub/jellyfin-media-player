@@ -150,6 +150,7 @@ bool EventFilter::eventFilter(QObject* watched, QEvent* event)
           //QMetaObject::invokeMethod(webView, "goBack");
           // Custom: Navigate to previous chapter
           PlayerComponent::Get().userCommand("add chapter -1");
+          return true; // Empêcher la propagation
         }
 
         if (mouseEvent->button() == Qt::ForwardButton)
@@ -157,6 +158,7 @@ bool EventFilter::eventFilter(QObject* watched, QEvent* event)
           //QMetaObject::invokeMethod(webView, "goForward");
           // Custom: Navigate to next chapter
           PlayerComponent::Get().userCommand("add chapter 1");
+          return true; // Empêcher la propagation
         }
       }
     }
@@ -170,13 +172,13 @@ bool EventFilter::eventFilter(QObject* watched, QEvent* event)
         
         // Gestion de la molette horizontale pour le seek
         if (angleDelta.x() > 0)
-        {
-          PlayerComponent::Get().userCommand("seek -3 exact");
+            {
+              PlayerComponent::Get().userCommand("seek -3 exact");
           return true;
-        }
+            }
         else if (angleDelta.x() < 0)
-        {
-          PlayerComponent::Get().userCommand("seek 3 exact");
+            {
+              PlayerComponent::Get().userCommand("seek 3 exact");
           return true;
         }
       }
@@ -307,13 +309,13 @@ bool EventFilter::eventFilter(QObject* watched, QEvent* event)
       // Gestion de la molette horizontale pour le seek
       QPoint angleDelta = wheelEvent->angleDelta();
       if (angleDelta.x() > 0)
-      {
-        PlayerComponent::Get().userCommand("seek -3 exact");
+          {
+            PlayerComponent::Get().userCommand("seek -3 exact");
         return true;
-      }
+          }
       else if (angleDelta.x() < 0)
-      {
-        PlayerComponent::Get().userCommand("seek 3 exact");
+          {
+            PlayerComponent::Get().userCommand("seek 3 exact");
         return true;
       }
     }
